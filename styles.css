@@ -1,0 +1,30 @@
+.standard {
+   color: gray;
+}
+
+.number {
+   font-weight: bold;
+   color: orange;
+}
+
+.string {
+   color: green;
+}
+
+.keyword {
+   font-weight: bold;
+   color: purple;
+}
+
+.function {
+   color: yellow;
+}
+
+.boolean {
+   font-weight: bold;
+   color: red;
+}
+
+.comment {
+   color: lightgray;
+}
