@@ -20,9 +20,9 @@ defmodule JSSH do
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-          <title>JS Syntax Highlighter</title></head><body>
+          <title>JS Syntax Highlighter</title></head><body><pre>
     """
-    doc_tail = "</body></html>"
+    doc_tail = "</pre></body></html>"
 
     # Regular expressions
     keywordRegex = ~r/\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
