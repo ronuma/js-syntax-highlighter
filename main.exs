@@ -25,11 +25,11 @@ defmodule JSSH do
     doc_tail = "</pre></body></html>"
 
     # Regular expressions
+    commentRegex = ~r/\/\/(|\r)*|\/\*(.|\n|\r)*\*\//
+    stringRegex = ~r/(["'])(?:(?=(\\?))\2.)*?\1/
     keywordRegex = ~r/\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
     numberRegex = ~r/\b-?\d+\.?(\d+)?\b/
     booleanRegex = ~r/\b(?:true|false)\b/
-    stringRegex = ~r/\b(["'])(?:(?=(\\?))\2.)*?\1\b/
-    commentRegex = ~r/\b\/\/.*|\/\*(.|\n)*\*\/\b/
 
     # initialize html output file
     File.write(out_filename, doc_head)
@@ -41,7 +41,7 @@ defmodule JSSH do
     highlighted_code =
       code
       # split the code by lines
-      |> String.split("\n", trim: true)
+      |> String.split("\n")
       # map every line, if the line is empty, add a <br> tag
       |> Enum.map(fn line ->
         if line == "" do
@@ -52,23 +52,22 @@ defmodule JSSH do
           |> String.split(~r/\b/)
           # map every word, if the word is a token, highlight it
           |> Enum.map(fn word ->
-            IO.puts word
-            if Regex.match?(stringRegex, word) do
-              "<span class=\"string\">#{word}</span>"
+            if Regex.match?(~r/\/\/.*/, word) do
+              Regex.replace(commentRegex, word, "<span class=\"comment\">\\0</span>")
             else
-              if Regex.match?(booleanRegex, word) do
-                "<span class=\"boolean\">#{word}</span>"
+              if Regex.match?(stringRegex, word) do
+                "<span class=\"string\">#{word}</span>"
                 else
-                  if Regex.match?(numberRegex, word) do
-                    "<span class=\"number\">#{word}</span>"
+                  if Regex.match?(keywordRegex, word) do
+                    "<span class=\"keyword\">#{word}</span>"
                   else
-                    if Regex.match?(keywordRegex, word) do
-                      "<span class=\"keyword\">#{word}</span>"
+                    if Regex.match?(numberRegex, word) do
+                      "<span class=\"number\">#{word}</span>"
                     else
-                      if Regex.match?(commentRegex, word) do
-                        "<span class=\"comment\">#{word}</span>"
+                      if Regex.match?(booleanRegex, word) do
+                        "<span class=\"boolean\">#{word}</span>"
                       else
-                        "<span class=\"standard\">#{word}</span>"
+                        "<span>#{word}</span>"
                       end
                     end
                   end
