@@ -37,9 +37,7 @@ defmodule JSSH do
     # read js file
     code = File.read!(in_filename)
 
-    # find and highlight keywords
-    highlighted_code =
-      code
+    code
       # split the code by lines
       |> String.split("\n")
       # map every line, if the line is empty, add a <br> tag
@@ -52,24 +50,48 @@ defmodule JSSH do
           |> String.split(~r/\b/)
           # map every word, if the word is a token, highlight it
           |> Enum.map(fn word ->
-            if Regex.match?(~r/\/\/.*/, word) do
-              Regex.replace(commentRegex, word, "<span class=\"comment\">\\0</span>")
+            if Regex.match?(~r/\/\*(.|\n|\r)*/, word) do
+              result = Regex.run(commentRegex, code)
+              html = "<span class=\"comment\">#{result}</span>"
+              code = Regex.replace(commentRegex, code, "")
+              File.write(out_filename, html, [:append])
             else
-              if Regex.match?(stringRegex, word) do
-                "<span class=\"string\">#{word}</span>"
-                else
+            if Regex.match?(~r/\/\/.*/, word) do
+              result = Regex.run(commentRegex, code)
+              html = "<span class=\"comment\">#{result}</span>"
+              code = Regex.replace(commentRegex, code, "")
+              File.write(out_filename, html, [:append])
+            else
+              if Regex.match?(~r/.*["']/, word) do
+                result = Regex.run(stringRegex, code)
+                html = "<span class=\"string\">#{result}</span>"
+                code = Regex.replace(stringRegex, code, "")
+                File.write(out_filename, html, [:append])
+              else
                   if Regex.match?(keywordRegex, word) do
-                    "<span class=\"keyword\">#{word}</span>"
+                    result = Regex.run(keywordRegex, code)
+                    html = "<span class=\"keyword\">#{result}</span>"
+                    code = Regex.replace(keywordRegex, code, "")
+                    File.write(out_filename, html, [:append])
                   else
                     if Regex.match?(numberRegex, word) do
-                      "<span class=\"number\">#{word}</span>"
+                      result = Regex.run(numberRegex, code)
+                      html = "<span class=\"number\">#{result}</span>"
+                      code = Regex.replace(numberRegex, code, "")
+                      File.write(out_filename, html, [:append])
                     else
                       if Regex.match?(booleanRegex, word) do
-                        "<span class=\"boolean\">#{word}</span>"
+                        result = Regex.run(booleanRegex, code)
+                        html = "<span class=\"boolean\">#{result}</span>"
+                        code = Regex.replace(booleanRegex, code, "")
+                        File.write(out_filename, html, [:append])
                       else
-                        "<span>#{word}</span>"
+                        result = word
+                        html = "<span>#{result}</span>"
+                        File.write(out_filename, html, [:append])
                       end
                     end
+                  end
                   end
                 end
               end
@@ -80,9 +102,6 @@ defmodule JSSH do
       end)
       # join the lines again with a <br> tag
       |> Enum.join("<br>")
-
-    # write the highlighted code to the html file
-    File.write(out_filename, highlighted_code, [:append])
 
     # close the tags of the html file and finish
     File.write(out_filename, doc_tail, [:append])
