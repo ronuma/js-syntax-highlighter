@@ -26,10 +26,10 @@ defmodule JSSH do
 
     # Regular expressions
     keywordRegex = ~r/\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
-    numberRegex = ~r/\b-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?\b/
+    numberRegex = ~r/\b-?\d+\.?(\d+)?\b/
     booleanRegex = ~r/\b(?:true|false)\b/
-    stringRegex = ~r/"(?:\\.|[^"\\])*"/
-    commentRegex = ~r/(?:\/\/.*)|(?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)/
+    stringRegex = ~r/\b(["'])(?:(?=(\\?))\2.)*?\1\b/
+    commentRegex = ~r/\b\/\/.*|\/\*(.|\n)*\*\/\b/
 
     # initialize html output file
     File.write(out_filename, doc_head)
@@ -47,13 +47,12 @@ defmodule JSSH do
         if line == "" do
           "<br>"
         else
-          # get the indentation of the line
-          indentation = String.split(line, ~r/\S/, trim: true) |> List.first() || ""
           line
           # split the line by words
           |> String.split(~r/\b/)
           # map every word, if the word is a token, highlight it
           |> Enum.map(fn word ->
+            IO.puts word
             if Regex.match?(stringRegex, word) do
               "<span class=\"string\">#{word}</span>"
             else
@@ -78,8 +77,6 @@ defmodule JSSH do
           end)
           # join the words again
           |> Enum.join("")
-          # add the indentation to the line
-          |> String.replace_prefix("", indentation)
         end
       end)
       # join the lines again with a <br> tag
