@@ -28,3 +28,7 @@ body {
 .special {
    color: rgb(220, 190, 25);
 }
+
+.punctuation {
+   color: rgb(255, 255, 255);
+}

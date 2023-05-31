@@ -10,3 +10,18 @@ if (amTesting) {
 }
 
 const list = [1, 2, 3, 4, 5]
+
+for (let i = 0; i < list.length; i++) {
+   console.log(list[i])
+}
+
+const obj = {
+   name: "test",
+   age: 123,
+   isTesting: true,
+   anotherObj: {
+      name: "test2",
+      age: 456,
+      isTesting: !amTesting,
+   },
+}

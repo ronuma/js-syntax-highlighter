@@ -45,7 +45,7 @@ defmodule JSSH do
   defp inspect_line("", out_filename), do: File.write(out_filename, "<br>", [:append])
   defp inspect_line(line, out_filename) do
     # Regular expressions
-    commentRegex = ~r/^\/\/.*|\/\*(.|\n|\r)*\*\//
+    commentRegex = ~r/^\/\/.*/
     stringRegex = ~r/^(["'])(?:(?=(\\?))\2.)*?\1/
     keywordRegex = ~r/^\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
     numberRegex = ~r/^\b-?\d+\.?(\d+)?\b/
@@ -53,11 +53,12 @@ defmodule JSSH do
     equalRegex = ~r/^=/
     spaceRegex = ~r/^\s+/
     varRegex = ~r/^[a-zA-Z_$][a-zA-Z0-9_$]*/
+    mathRegex = ~r/^(\+|\-|\/|\*|%)/
+    divRegex = ~r/^\//
+    punctuationRegex = ~r/^[;,]/
     # matches any non-space character (words that we don't want to highlight)
     anyRegex = ~r/^\S+/
     specialsRegex = ~r/^(\(|\)|\{|\}|\[|\])/
-
-    IO.inspect(line)
 
     cond do
       Regex.match?(commentRegex, line) ->
@@ -113,6 +114,18 @@ defmodule JSSH do
         html = "<span class=\"special\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(specialsRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(mathRegex, line) ->
+        [head | _] = Regex.run(mathRegex, line)
+        html = "<span class=\"boolean\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(mathRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(punctuationRegex, line) ->
+        [head | _] = Regex.run(punctuationRegex, line)
+        html = "<span class=\"punctuation\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(punctuationRegex, line, "", global: false)
         inspect_line(line, out_filename)
       true ->
         [head | _] = Regex.run(anyRegex, line)
