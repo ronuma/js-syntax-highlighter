@@ -30,13 +30,9 @@ body {
 }
 
 .punctuation {
-   color: rgb(231, 231, 231);
+   color: rgb(166, 189, 184);
 }
 
 .var {
    color: rgb(21, 202, 163);
-}
-
-.property {
-   color: rgb(166, 189, 184);
 }

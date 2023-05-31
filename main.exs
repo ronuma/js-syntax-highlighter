@@ -4,6 +4,9 @@
 # Andrea Alexandra Barrón Córdova, A01783126
 
 defmodule JSSH do
+  @doc """
+  This function runs the program. It initializes the html file and calls the write_file function.
+  """
   def run() do
     in_filename = "test.js"
     out_filename = "index.html"
@@ -31,6 +34,10 @@ defmodule JSSH do
 
   end
 
+  @doc """
+  This function writes the html file.
+  It splits the input files by line and for each line calls the inspect_line function.
+  """
   defp write_file(code, out_filename) do
     code
     # split the code by lines
@@ -42,134 +49,140 @@ defmodule JSSH do
     end)
   end
 
+  @doc """
+  This function inspects each line of the code and writes the html file.
+  It uses regular expressions to match the different patterns and writes the html code.
+  For every line, it calls itself recursively until the line is empty.
+  Every regular expression ensures that it is searched for at the beginning of the line.
+  """
   defp inspect_line("", out_filename), do: File.write(out_filename, "<br>", [:append])
   defp inspect_line(line, out_filename) do
     # Regular expressions
-    commentRegex = ~r/^\/\/.*/
-    stringRegex = ~r/^(["'])(?:(?=(\\?))\2.)*?\1/
-    keywordRegex = ~r/^\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
-    numberRegex = ~r/^\b-?\d+\.?(\d+)?\b/
-    booleanRegex = ~r/^\b(?:true|false)\b/
-    equalRegex = ~r/^(=|\<|\>|\!)/
-    spaceRegex = ~r/^\s+/
-    varRegex = ~r/^[a-zA-Z_$][a-zA-Z0-9_$]*/
-    mathRegex = ~r/^(\+|\-|\/|\*|%)/
-    punctuationRegex = ~r/^[;,\.]/
-    funcCallRegex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\()/
-    objRegex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\.)/
-    propertyRegex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\:)/
+    comment_regex = ~r/^\/\/.*/
+    string_regex = ~r/^(["'])(?:(?=(\\?))\2.)*?\1/
+    keyword_regex = ~r/^\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
+    number_regex = ~r/^\b-?\d+\.?(\d+)?\b/
+    boolean_regex = ~r/^\b(?:true|false)\b/
+    equal_regex = ~r/^(=|\<|\>|\!)/
+    space_regex = ~r/^\s+/
+    var_regex = ~r/^[a-zA-Z_$][a-zA-Z0-9_$]*/
+    math_regex = ~r/^(\+|\-|\/|\*|%)/
+    punct_regex = ~r/^[;,\.]/
+    func_call_regex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\()/
+    obj_regex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\.)/
+    prop_regex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\:)/
     # matches any non-space character (words that we don't want to highlight)
-    anyRegex = ~r/^\S+/
-    specialsRegex = ~r/^(\(|\)|\{|\}|\[|\])/
+    any_regex = ~r/^\S+/
+    specials_regex = ~r/^(\(|\)|\{|\}|\[|\])/
 
     cond do
       # check for comment so we can ignore the rest of the line
-      Regex.match?(commentRegex, line) ->
-        [head | _] = Regex.run(commentRegex, line)
+      Regex.match?(comment_regex, line) ->
+        [head | _] = Regex.run(comment_regex, line)
         html = "<span class=\"comment\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(commentRegex, line, "", global: false)
+        line = Regex.replace(comment_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for string so we can ignore the rest of the line until string closes
-      Regex.match?(stringRegex, line) ->
-        [head | _] = Regex.run(stringRegex, line)
+      Regex.match?(string_regex, line) ->
+        [head | _] = Regex.run(string_regex, line)
         html = "<span class=\"string\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(stringRegex, line, "", global: false)
+        line = Regex.replace(string_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a keyword pattern
-      Regex.match?(keywordRegex, line) ->
-        [head | _] = Regex.run(keywordRegex, line)
+      Regex.match?(keyword_regex, line) ->
+        [head | _] = Regex.run(keyword_regex, line)
         html = "<span class=\"keyword\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(keywordRegex, line, "", global: false)
+        line = Regex.replace(keyword_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a space pattern
-      Regex.match?(spaceRegex, line) ->
-        [head | _] = Regex.run(spaceRegex, line)
+      Regex.match?(space_regex, line) ->
+        [head | _] = Regex.run(space_regex, line)
         html = "<span class=\"space\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(spaceRegex, line, "", global: false)
+        line = Regex.replace(space_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a boolean pattern
-      Regex.match?(booleanRegex, line) ->
-        [head | _] = Regex.run(booleanRegex, line)
+      Regex.match?(boolean_regex, line) ->
+        [head | _] = Regex.run(boolean_regex, line)
         html = "<span class=\"boolean\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(booleanRegex, line, "", global: false)
+        line = Regex.replace(boolean_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a punctuation pattern
-      Regex.match?(punctuationRegex, line) ->
-        [head | _] = Regex.run(punctuationRegex, line)
+      Regex.match?(punct_regex, line) ->
+        [head | _] = Regex.run(punct_regex, line)
         html = "<span class=\"punctuation\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(punctuationRegex, line, "", global: false)
+        line = Regex.replace(punct_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a function call pattern
-      Regex.match?(funcCallRegex, line) ->
-        [head | _] = Regex.run(funcCallRegex, line)
+      Regex.match?(func_call_regex, line) ->
+        [head | _] = Regex.run(func_call_regex, line)
         html = "<span class=\"special\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(funcCallRegex, line, "", global: false)
+        line = Regex.replace(func_call_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for an object pattern
       # do it before the variable to ensure the presence of the dot
       # replace it as a variable so we can color the dot properly
       # but we place the class number to color it properly
-      Regex.match?(objRegex, line) ->
-        [head | _] = Regex.run(varRegex, line)
+      Regex.match?(obj_regex, line) ->
+        [head | _] = Regex.run(var_regex, line)
         html = "<span class=\"number\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(varRegex, line, "", global: false)
+        line = Regex.replace(var_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for definition of object properties
-      Regex.match?(propertyRegex, line) ->
-        [head | _] = Regex.run(propertyRegex, line)
-        html = "<span class=\"property\">#{head}</span>"
+      Regex.match?(prop_regex, line) ->
+        [head | _] = Regex.run(prop_regex, line)
+        html = "<span class=\"punctuation\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(propertyRegex, line, "", global: false)
+        line = Regex.replace(prop_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a variable name pattern
-      Regex.match?(varRegex, line) ->
-        [head | _] = Regex.run(varRegex, line)
+      Regex.match?(var_regex, line) ->
+        [head | _] = Regex.run(var_regex, line)
         html = "<span class=\"var\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(varRegex, line, "", global: false)
+        line = Regex.replace(var_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for an equality or inequality pattern
-      Regex.match?(equalRegex, line) ->
-        [head | _] = Regex.run(equalRegex, line)
+      Regex.match?(equal_regex, line) ->
+        [head | _] = Regex.run(equal_regex, line)
         html = "<span class=\"boolean\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(equalRegex, line, "", global: false)
+        line = Regex.replace(equal_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a number pattern
-      Regex.match?(numberRegex, line) ->
-        [head | _] = Regex.run(numberRegex, line)
+      Regex.match?(number_regex, line) ->
+        [head | _] = Regex.run(number_regex, line)
         html = "<span class=\"number\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(numberRegex, line, "", global: false)
+        line = Regex.replace(number_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for parentheses, brackets, braces
-      Regex.match?(specialsRegex, line) ->
-        [head | _] = Regex.run(specialsRegex, line)
+      Regex.match?(specials_regex, line) ->
+        [head | _] = Regex.run(specials_regex, line)
         html = "<span class=\"special\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(specialsRegex, line, "", global: false)
+        line = Regex.replace(specials_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for arithmetic operators
-      Regex.match?(mathRegex, line) ->
-        [head | _] = Regex.run(mathRegex, line)
+      Regex.match?(math_regex, line) ->
+        [head | _] = Regex.run(math_regex, line)
         html = "<span class=\"boolean\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(mathRegex, line, "", global: false)
+        line = Regex.replace(math_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # there was no match, so we just write the line as is
       true ->
-        [head | _] = Regex.run(anyRegex, line)
+        [head | _] = Regex.run(any_regex, line)
         html = "<span>#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = Regex.replace(anyRegex, line, "", global: false)
+        line = Regex.replace(any_regex, line, "", global: false)
         inspect_line(line, out_filename)
     end
   end
