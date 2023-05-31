@@ -53,70 +53,72 @@ defmodule JSSH do
     equalRegex = ~r/^=/
     spaceRegex = ~r/^\s+/
     varRegex = ~r/^[a-zA-Z_$][a-zA-Z0-9_$]*/
-    parenRegex = ~r/^\(|\)/
+    # matches any non-space character (words that we don't want to highlight)
+    anyRegex = ~r/^\S+/
+    specialsRegex = ~r/^(\(|\)|\{|\}|\[|\])/
+
+    IO.inspect(line)
 
     cond do
       Regex.match?(commentRegex, line) ->
-        IO.puts("COMMENT DETECTED")
         [head | _] = Regex.run(commentRegex, line)
         html = "<span class=\"comment\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(commentRegex, line, "", global: false)
         inspect_line(line, out_filename)
       Regex.match?(stringRegex, line) ->
-        IO.puts("STRING DETECTED")
         [head | _] = Regex.run(stringRegex, line)
         html = "<span class=\"string\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(stringRegex, line, "", global: false)
         inspect_line(line, out_filename)
       Regex.match?(keywordRegex, line) ->
-        IO.puts("KEYWORD DETECTED")
         [head | _] = Regex.run(keywordRegex, line)
         html = "<span class=\"keyword\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(keywordRegex, line, "", global: false)
         inspect_line(line, out_filename)
       Regex.match?(spaceRegex, line) ->
-        IO.puts("SPACE DETECTED")
         [head | _] = Regex.run(spaceRegex, line)
         html = "<span class=\"space\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(spaceRegex, line, "", global: false)
         inspect_line(line, out_filename)
+      Regex.match?(booleanRegex, line) ->
+        [head | _] = Regex.run(booleanRegex, line)
+        html = "<span class=\"boolean\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(booleanRegex, line, "", global: false)
+        inspect_line(line, out_filename)
       Regex.match?(varRegex, line) ->
-        IO.puts("VAR DETECTED")
         [head | _] = Regex.run(varRegex, line)
         html = "<span>#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(varRegex, line, "", global: false)
         inspect_line(line, out_filename)
       Regex.match?(equalRegex, line) ->
-        IO.puts("EQUAL DETECTED")
         [head | _] = Regex.run(equalRegex, line)
         html = "<span class=\"boolean\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(equalRegex, line, "", global: false)
         inspect_line(line, out_filename)
-      Regex.match?(booleanRegex, line) ->
-        IO.puts("BOOLEAN DETECTED")
-        [head | _] = Regex.run(booleanRegex, line)
-        html = "<span class=\"boolean\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(booleanRegex, line, "", global: false)
-        inspect_line(line, out_filename)
       Regex.match?(numberRegex, line) ->
-        IO.puts("NUMBER DETECTED")
         [head | _] = Regex.run(numberRegex, line)
         html = "<span class=\"number\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(numberRegex, line, "", global: false)
         inspect_line(line, out_filename)
-      true ->
-        IO.puts("NO DEFINED MATCH DETECTED")
-        html = "<span>#{line}</span>"
+      Regex.match?(specialsRegex, line) ->
+        [head | _] = Regex.run(specialsRegex, line)
+        html = "<span class=\"special\">#{head}</span>"
         File.write(out_filename, html, [:append])
-        line = String.replace(line, line, "", global: false)
+        line = Regex.replace(specialsRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      true ->
+        [head | _] = Regex.run(anyRegex, line)
+        html = "<span>#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(anyRegex, line, "", global: false)
         inspect_line(line, out_filename)
     end
   end

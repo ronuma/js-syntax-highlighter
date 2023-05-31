@@ -6,5 +6,7 @@ let anotherNumber = 0
 // test comment
 if (amTesting) {
    console.log(test)
-   console.log(testNumber) // test comment for number
+   console.log(testNumber) // test comment for number 45
 }
+
+const list = [1, 2, 3, 4, 5]

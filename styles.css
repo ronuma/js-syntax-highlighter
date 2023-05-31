@@ -24,3 +24,7 @@ body {
 .comment {
    color: rgb(105, 102, 102);
 }
+
+.special {
+   color: rgb(220, 190, 25);
+}
