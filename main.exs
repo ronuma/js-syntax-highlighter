@@ -1,5 +1,5 @@
 # JavaScript syntax highlighter
-
+# 2023-05-31
 # Rodrigo Núñez Magallanes, A01028310
 # Andrea Alexandra Barrón Córdova, A01783126
 
