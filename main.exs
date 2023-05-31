@@ -28,6 +28,8 @@ defmodule JSSH do
     # read js file
     code = File.read!(in_filename)
     write_file(code, out_filename)
+    File.write(out_filename, "</pre></body></html>", [:append])
+
   end
 
   defp write_file("", out_filename), do: File.write(out_filename, "</pre></body></html>", [:append])
@@ -40,21 +42,17 @@ defmodule JSSH do
     keywordRegex = ~r/\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
     numberRegex = ~r/\b-?\d+\.?(\d+)?\b/
     booleanRegex = ~r/\b(?:true|false)\b/
-    equalRegex = ~r/\s*=\s*/
+    equalRegex = ~r/=/
 
     code
     # split the code by lines
-    |> String.split("\n", trim: true)
+    |> String.split("\n")
+    |> Enum.map(&String.trim_trailing/1)
     # map every line, if the line is empty, add a <br> tag
     |> Enum.map(fn line ->
-      # if line == "" do
-      #   html = "<br>"
-      #   File.write(out_filename, html, [:append])
-      #   :skip
-      # else
         line
         # split the line by words
-        |> String.split(~r/\b/)
+        |> String.split(~r/\b/) # TODO: change this separation
         # map every word, if the word is a token, highlight it
         |> Enum.map(fn word ->
           IO.inspect(word)
@@ -63,7 +61,7 @@ defmodule JSSH do
             result = Regex.run(commentRegex, code)
             html = "<span class=\"comment\">#{result}</span>"
             File.write(out_filename, html, [:append])
-            code = Regex.replace(commentRegex, code, "", global: false, first: :replace)
+            code = Regex.replace(commentRegex, code, "", global: false)
             # throw :stop
             write_file(code, out_filename)
           else
@@ -151,7 +149,6 @@ defmodule JSSH do
             end
           end
       end)
-    # end
     end)
   end
 
