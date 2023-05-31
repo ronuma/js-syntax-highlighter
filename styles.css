@@ -6,11 +6,11 @@ body {
 }
 
 .number {
-   color: rgb(207, 140, 15);
+   color: rgb(226, 160, 36);
 }
 
 .string {
-   color: rgb(68, 212, 68);
+   color: rgb(105, 219, 105);
 }
 
 .keyword {
@@ -18,17 +18,25 @@ body {
 }
 
 .boolean {
-   color: rgb(156, 8, 8);
+   color: rgb(228, 36, 36);
 }
 
 .comment {
-   color: rgb(105, 102, 102);
+   color: rgb(102, 99, 99);
 }
 
 .special {
-   color: rgb(220, 190, 25);
+   color: rgb(247, 216, 42);
 }
 
 .punctuation {
-   color: rgb(255, 255, 255);
+   color: rgb(231, 231, 231);
+}
+
+.var {
+   color: rgb(21, 202, 163);
+}
+
+.property {
+   color: rgb(166, 189, 184);
 }
