@@ -1,12 +1,10 @@
 # JavaScript syntax highlighter
 
 # Rodrigo Núñez Magallanes, A01028310
-# Andrea Alexandra Barrón Córdova,
+# Andrea Alexandra Barrón Córdova, A01783126
 
 defmodule JSSH do
-
   def run() do
-    # ----  CONSTANTS  -----
     in_filename = "test.js" # this will be inputted in the end
     out_filename = "index.html"
     doc_head = """
@@ -22,72 +20,107 @@ defmodule JSSH do
           <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
           <title>JS Syntax Highlighter</title></head><body><pre>
     """
-    doc_tail = "</pre></body></html>"
-
-    # Regular expressions
-    keywordRegex = ~r/\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
-    numberRegex = ~r/\b-?\d+\.?(\d+)?\b/
-    booleanRegex = ~r/\b(?:true|false)\b/
-    stringRegex = ~r/\b(["'])(?:(?=(\\?))\2.)*?\1\b/
-    commentRegex = ~r/\b\/\/.*|\/\*(.|\n)*\*\/\b/
 
     # initialize html output file
     File.write(out_filename, doc_head)
 
     # read js file
     code = File.read!(in_filename)
+    write_file(code, out_filename)
+    File.write(out_filename, "</pre></body></html>", [:append])
 
-    # find and highlight keywords
-    highlighted_code =
-      code
-      # split the code by lines
-      |> String.split("\n", trim: true)
-      # map every line, if the line is empty, add a <br> tag
-      |> Enum.map(fn line ->
-        if line == "" do
-          "<br>"
-        else
-          line
-          # split the line by words
-          |> String.split(~r/\b/)
-          # map every word, if the word is a token, highlight it
-          |> Enum.map(fn word ->
-            IO.puts word
-            if Regex.match?(stringRegex, word) do
-              "<span class=\"string\">#{word}</span>"
-            else
-              if Regex.match?(booleanRegex, word) do
-                "<span class=\"boolean\">#{word}</span>"
-                else
-                  if Regex.match?(numberRegex, word) do
-                    "<span class=\"number\">#{word}</span>"
-                  else
-                    if Regex.match?(keywordRegex, word) do
-                      "<span class=\"keyword\">#{word}</span>"
-                    else
-                      if Regex.match?(commentRegex, word) do
-                        "<span class=\"comment\">#{word}</span>"
-                      else
-                        "<span class=\"standard\">#{word}</span>"
-                      end
-                    end
-                  end
-                end
-              end
-          end)
-          # join the words again
-          |> Enum.join("")
-        end
-      end)
-      # join the lines again with a <br> tag
-      |> Enum.join("<br>")
+  end
 
-    # write the highlighted code to the html file
-    File.write(out_filename, highlighted_code, [:append])
+  defp write_file(code, out_filename) do
+    code
+    # split the code by lines
+    |> String.split("\n")
+    # remove trailing spaces and \r
+    |> Enum.map(&String.trim_trailing/1)
+    |> Enum.map(fn line ->
+      inspect_line(line, out_filename)
+    end)
+  end
 
-    # close the tags of the html file and finish
-    File.write(out_filename, doc_tail, [:append])
+  defp inspect_line("", out_filename), do: File.write(out_filename, "<br>", [:append])
+  defp inspect_line(line, out_filename) do
+    # Regular expressions
+    commentRegex = ~r/^\/\/.*|\/\*(.|\n|\r)*\*\//
+    stringRegex = ~r/^(["'])(?:(?=(\\?))\2.)*?\1/
+    keywordRegex = ~r/^\b(?:abstract|await|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
+    numberRegex = ~r/^\b-?\d+\.?(\d+)?\b/
+    booleanRegex = ~r/^\b(?:true|false)\b/
+    equalRegex = ~r/^=/
+    spaceRegex = ~r/^\s+/
+    varRegex = ~r/^[a-zA-Z_$][a-zA-Z0-9_$]*/
+    # matches any non-space character (words that we don't want to highlight)
+    anyRegex = ~r/^\S+/
+    specialsRegex = ~r/^(\(|\)|\{|\}|\[|\])/
 
+    IO.inspect(line)
+
+    cond do
+      Regex.match?(commentRegex, line) ->
+        [head | _] = Regex.run(commentRegex, line)
+        html = "<span class=\"comment\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(commentRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(stringRegex, line) ->
+        [head | _] = Regex.run(stringRegex, line)
+        html = "<span class=\"string\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(stringRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(keywordRegex, line) ->
+        [head | _] = Regex.run(keywordRegex, line)
+        html = "<span class=\"keyword\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(keywordRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(spaceRegex, line) ->
+        [head | _] = Regex.run(spaceRegex, line)
+        html = "<span class=\"space\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(spaceRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(booleanRegex, line) ->
+        [head | _] = Regex.run(booleanRegex, line)
+        html = "<span class=\"boolean\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(booleanRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(varRegex, line) ->
+        [head | _] = Regex.run(varRegex, line)
+        html = "<span>#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(varRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(equalRegex, line) ->
+        [head | _] = Regex.run(equalRegex, line)
+        html = "<span class=\"boolean\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(equalRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(numberRegex, line) ->
+        [head | _] = Regex.run(numberRegex, line)
+        html = "<span class=\"number\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(numberRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      Regex.match?(specialsRegex, line) ->
+        [head | _] = Regex.run(specialsRegex, line)
+        html = "<span class=\"special\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(specialsRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+      true ->
+        [head | _] = Regex.run(anyRegex, line)
+        html = "<span>#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(anyRegex, line, "", global: false)
+        inspect_line(line, out_filename)
+    end
   end
 
 end

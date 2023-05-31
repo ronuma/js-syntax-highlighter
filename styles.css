@@ -2,30 +2,29 @@ html,
 body {
    background-color: rgb(20, 19, 19);
    font-family: "Open Sans", sans-serif;
-}
-.standard {
-   color: aqua;
+   color: rgb(21, 202, 163);
 }
 
 .number {
-   font-weight: bold;
    color: rgb(207, 140, 15);
 }
 
 .string {
-   color: rgb(62, 182, 62);
+   color: rgb(68, 212, 68);
 }
 
 .keyword {
-   font-weight: bold;
    color: purple;
 }
 
 .boolean {
-   font-weight: bold;
-   color: red;
+   color: rgb(156, 8, 8);
 }
 
 .comment {
-   color: lightgray;
+   color: rgb(105, 102, 102);
+}
+
+.special {
+   color: rgb(220, 190, 25);
 }
