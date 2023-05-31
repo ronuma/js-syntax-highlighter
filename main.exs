@@ -6,6 +6,16 @@
 defmodule JSSH do
   @doc """
   This function runs the program. It initializes the html file and calls the write_file function.
+
+  write_file function
+  This function writes the html file.
+  It splits the input files by line and for each line calls the inspect_line function.
+
+  inspect_line
+  This function inspects each line of the code and writes the html file.
+  It uses regular expressions to match the different patterns and writes the html code.
+  For every line, it calls itself recursively until the line is empty.
+  Every regular expression ensures that it is searched for at the beginning of the line.
   """
   def run() do
     in_filename = "test.js"
@@ -34,10 +44,6 @@ defmodule JSSH do
 
   end
 
-  @doc """
-  This function writes the html file.
-  It splits the input files by line and for each line calls the inspect_line function.
-  """
   defp write_file(code, out_filename) do
     code
     # split the code by lines
@@ -49,12 +55,6 @@ defmodule JSSH do
     end)
   end
 
-  @doc """
-  This function inspects each line of the code and writes the html file.
-  It uses regular expressions to match the different patterns and writes the html code.
-  For every line, it calls itself recursively until the line is empty.
-  Every regular expression ensures that it is searched for at the beginning of the line.
-  """
   defp inspect_line("", out_filename), do: File.write(out_filename, "<br>", [:append])
   defp inspect_line(line, out_filename) do
     # Regular expressions
