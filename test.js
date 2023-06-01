@@ -10,6 +10,7 @@ const test = "Hello world for test.js"
 const amTesting = true
 const testNumber = 123.52
 let anotherNumber = 0
+let theOtherString = `testing this ${how}`
 
 // comments should ignore "strings"
 if (amTesting) {

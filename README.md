@@ -32,9 +32,9 @@ Andrea Alexandra Barrón Córdova, A01783126
 
 ## Our thoughts about the proposed solution
 
-`/* Reflexiona sobre la solución planteada, los algoritmos implementados y sobre el tiempo de ejecución de estos. */`
+The proposed solution has its advantages and disadvantages. To begin with, we had to sacrifice the recognition of multiline comments and strings. This was done to simplify the algorithm and be able to focus on the recognition of tokens. However, this is not a problem, since the program works correctly with single-line strings and comments. In addition, the program is not sensitive to whitespace, so it does not matter if there is whitespace between the tokens, the program will recognize them anyway.
 
-<!-- CADA QUIÉN UNA, NO? -->
+We used recursion and list handling, and well the execution time of the program depends to a large extent on the size of the file to be read. Actually, the execution time is not that long, but if you wanted to read a very large file, the execution time could be considerable. With the test files we have, the execution time is approximately 0.5 seconds.
 
 <br>
 
@@ -46,6 +46,4 @@ Andrea Alexandra Barrón Córdova, A01783126
 
 ## Ethical implications
 
-`/*  Agrega además una breve reflexión sobre las implicaciones éticas que el tipo de tecnología que desarrollaste pudiera tener en la sociedad. */`
-
-<!-- IGUAL CADA QUIÉN UNA? -->
+We consider that this type of technology does not necessarily have direct ethical implications, we do not see it quite so. This type of technology is basically designed for better development experience when working with a programming language, in this case, JavaScript, and also possibly for pointing out errors (by adding a DFA that executes every time a new character is added to the file, for example). However, we do not see any ethical implications in this type of technology, since it is not designed to be used in a malicious way, but rather to facilitate the work of developers.

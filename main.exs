@@ -60,7 +60,7 @@ defmodule JSSH do
   defp inspect_line(line, out_filename) do
     # Regular expressions
     comment_regex = ~r/^\/\/.*/
-    string_regex = ~r/^(["'])(?:(?=(\\?))\2.)*?\1/
+    string_regex = ~r/^(["'`])(?:(?=(\\?))\2.)*?\1/
     keyword_regex = ~r/^\b(?:abstract|await|async|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|do|double|else|enum|export|extends|final|finally|float|for|function|from|goto|if|implements|import|in|instanceof|int|interface|let|long|native|new|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|try|typeof|var|void|volatile|while|with|yield)\b/
     number_regex = ~r/^\b-?\d+\.?(\d+)?\b/
     # matches any boolean, null, undefined, delete, because they should be red
