@@ -20,7 +20,7 @@ Andrea Alexandra Barrón Córdova, A01783126
 
    a. "test.js": this is the file we used to test the program, it has a lot of different cases, so it is a good file to test the program with.
 
-   b. "test.long.js": sample file with a lot of lines of code. It is a file with many different functions written in JS, which perform different tasks.
+   b. "test.funcs.js": sample file with a real node.js module with some functions.
 
    c. "test.sw.js": this is an extract of a Redux state slice from a Next.js application which one of the team members worked on. It is a good example of a real-world JS file. SW in the file name stands for software, as in software development.
 
