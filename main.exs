@@ -63,7 +63,7 @@ defmodule JSSH do
     number_regex = ~r/^\b-?\d+\.?(\d+)?\b/
     # matches any boolean, null, undefined, delete, because they should be red
     boolean_regex = ~r/^\b(?:true|false|null|undefined|delete)\b/
-    equal_regex = ~r/^(=|\<|\>|\!)/
+    equal_regex = ~r/^(=|\<|\>|\!|\?|\:)/
     space_regex = ~r/^\s+/
     var_regex = ~r/^[a-zA-Z_$][a-zA-Z0-9_$]*/
     math_regex = ~r/^(\+|\-|\/|\*|%)/
