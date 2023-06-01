@@ -18,7 +18,8 @@ defmodule JSSH do
   Every regular expression ensures that it is searched for at the beginning of the line.
   """
   def run() do
-    in_filename = "test.js"
+    in_filename = IO.gets("Enter the name of the file to read:\n") |> String.trim()
+    IO.puts("Reading file #{in_filename}...")
     out_filename = "index.html"
     doc_head = """
     <!DOCTYPE html>
