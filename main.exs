@@ -73,6 +73,7 @@ defmodule JSSH do
     func_call_regex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\()/
     obj_regex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\.)/
     prop_regex = ~r/^([a-zA-Z_$][a-zA-Z0-9_$]*\:)/
+    arrowfunc_regex = ~r/^(\=\>)/
     # matches any non-space character (words that we don't want to highlight)
     any_regex = ~r/^\S+/
     specials_regex = ~r/^(\(|\)|\{|\}|\[|\])/
@@ -105,6 +106,13 @@ defmodule JSSH do
         html = "<span class=\"space\">#{head}</span>"
         File.write(out_filename, html, [:append])
         line = Regex.replace(space_regex, line, "", global: false)
+        inspect_line(line, out_filename)
+      # check for an arrow function before checking equal sign
+      Regex.match?(arrowfunc_regex, line) ->
+        [head | _] = Regex.run(arrowfunc_regex, line)
+        html = "<span class=\"keyword\">#{head}</span>"
+        File.write(out_filename, html, [:append])
+        line = Regex.replace(arrowfunc_regex, line, "", global: false)
         inspect_line(line, out_filename)
       # check for a boolean pattern
       Regex.match?(boolean_regex, line) ->
