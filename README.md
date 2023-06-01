@@ -16,7 +16,7 @@ Andrea Alexandra Barrón Córdova, A01783126
 
 3. Do `$ iex main.exs` to compile the project and open the interactive elixir shell
 
-4. Do `iex> JSSH.run()`; JSSH (short for JavaScript Syntax Highlighter) is the module name, and run is the function name, which takes no arguments. You will be prompted to enter the input file name (just the name, no special characters), and we provided three sample files:
+4. Do `iex> JSSH.run(in_filename)`; JSSH (short for JavaScript Syntax Highlighter) is the module name, and run is the function name, which takes the input file name as an argument (a string, so write it enclosed in double quotation marks e.g. "test.js"). We provided three sample test files:
 
    a. "test.js": this is the file we used to test the program, it has a lot of different cases, so it is a good file to test the program with.
 
