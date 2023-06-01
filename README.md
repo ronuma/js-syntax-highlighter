@@ -1,4 +1,4 @@
-# JavaScript syntax highlighter
+# JavaScript Syntax Highlighter
 
 2023-31-05
 
@@ -14,9 +14,9 @@ Andrea Alexandra Barrón Córdova, A01783126
 
 2. Navigate to the project directory in your terminal
 
-3. Do: `$ iex main.exs` to compile the project and open the interactive elixir shell
+3. Do `$ iex main.exs` to compile the project and open the interactive elixir shell
 
-4. Do: `iex> JSSH.run()`. JSSH is the module name, and run is the function name. You will be prompted to enter the input file name (just the name, no special characters), and we provided three sample files:
+4. Do `iex> JSSH.run()`; JSSH (short for JavaScript Syntax Highlighter) is the module name, and run is the function name, which takes no arguments. You will be prompted to enter the input file name (just the name, no special characters), and we provided three sample files:
 
    a. "test.js": this is the file we used to test the program, it has a lot of different cases, so it is a good file to test the program with.
 
