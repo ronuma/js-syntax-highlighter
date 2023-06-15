@@ -14,8 +14,13 @@ defmodule JSSH do
   inspect_line
   This function inspects each line of the code and writes the html file.
   It uses regular expressions to match the different patterns and writes the html code.
-  For every line, it calls itself recursively until the line is empty.
+  For every line, it calls itself recursively with helper func inject/4 until the line is empty.
   Every regular expression ensures that it is searched for at the beginning of the line.
+
+  inject
+  This function injects the html code into the html file.
+  It uses the regular expression to match the pattern and writes the html code.
+  It also calls the inspect_line function recursively until the line is empty.
   """
   def run(in_filename) do
     out_filename = "index.html"
@@ -79,120 +84,65 @@ defmodule JSSH do
     cond do
       # check for comment so we can ignore the rest of the line
       Regex.match?(comment_regex, line) ->
-        [head | _] = Regex.run(comment_regex, line)
-        html = "<span class=\"comment\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(comment_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, comment_regex, "comment", out_filename)
       # check for string so we can ignore the rest of the line until string closes
       Regex.match?(string_regex, line) ->
-        [head | _] = Regex.run(string_regex, line)
-        html = "<span class=\"string\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(string_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, string_regex, "string", out_filename)
       # check for a keyword pattern
       Regex.match?(keyword_regex, line) ->
-        [head | _] = Regex.run(keyword_regex, line)
-        html = "<span class=\"keyword\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(keyword_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, keyword_regex, "keyword", out_filename)
       # check for a space pattern
       Regex.match?(space_regex, line) ->
-        [head | _] = Regex.run(space_regex, line)
-        html = "<span class=\"space\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(space_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, space_regex, "space", out_filename)
       # check for an arrow function before checking equal sign
       Regex.match?(arrowfunc_regex, line) ->
-        [head | _] = Regex.run(arrowfunc_regex, line)
-        html = "<span class=\"keyword\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(arrowfunc_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, arrowfunc_regex, "arrowfunc", out_filename)
       # check for a boolean pattern
       Regex.match?(boolean_regex, line) ->
-        [head | _] = Regex.run(boolean_regex, line)
-        html = "<span class=\"boolean\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(boolean_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, boolean_regex, "boolean", out_filename)
       # check for a punctuation pattern
       Regex.match?(punct_regex, line) ->
-        [head | _] = Regex.run(punct_regex, line)
-        html = "<span class=\"punctuation\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(punct_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, punct_regex, "punctuation", out_filename)
       # check for a function call pattern
       Regex.match?(func_call_regex, line) ->
-        [head | _] = Regex.run(func_call_regex, line)
-        html = "<span class=\"special\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(func_call_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, func_call_regex, "special", out_filename)
       # check for an object pattern
       # do it before the variable to ensure the presence of the dot
       # replace it as a variable so we can color the dot properly
       # but we place the class number to color it properly
       Regex.match?(obj_regex, line) ->
-        [head | _] = Regex.run(var_regex, line)
-        html = "<span class=\"number\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(var_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, var_regex, "number", out_filename)
       # check for definition of object properties
       Regex.match?(prop_regex, line) ->
-        [head | _] = Regex.run(prop_regex, line)
-        html = "<span class=\"punctuation\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(prop_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, prop_regex, "punctuation", out_filename)
       # check for a variable name pattern
       Regex.match?(var_regex, line) ->
-        [head | _] = Regex.run(var_regex, line)
-        html = "<span class=\"var\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(var_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, var_regex, "var", out_filename)
       # check for an equality or inequality pattern
       Regex.match?(equal_regex, line) ->
-        [head | _] = Regex.run(equal_regex, line)
-        html = "<span class=\"boolean\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(equal_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, equal_regex, "boolean", out_filename)
       # check for a number pattern
       Regex.match?(number_regex, line) ->
-        [head | _] = Regex.run(number_regex, line)
-        html = "<span class=\"number\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(number_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, number_regex, "number", out_filename)
       # check for parentheses, brackets, braces
       Regex.match?(specials_regex, line) ->
-        [head | _] = Regex.run(specials_regex, line)
-        html = "<span class=\"special\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(specials_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, specials_regex, "special", out_filename)
       # check for arithmetic operators
       Regex.match?(math_regex, line) ->
-        [head | _] = Regex.run(math_regex, line)
-        html = "<span class=\"boolean\">#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(math_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, math_regex, "boolean", out_filename)
       # there was no match, so we just write the line as is
       true ->
-        [head | _] = Regex.run(any_regex, line)
-        html = "<span>#{head}</span>"
-        File.write(out_filename, html, [:append])
-        line = Regex.replace(any_regex, line, "", global: false)
-        inspect_line(line, out_filename)
+        inject(line, any_regex, "any", out_filename)
     end
+  end
+
+  # helper func to inject html into the file
+  def inject(line, regex, class, out_filename) do
+    [head | _] = Regex.run(regex, line)
+    html = "<span class=\"#{class}\">#{head}</span>"
+    File.write(out_filename, html, [:append])
+    line = Regex.replace(regex, line, "", global: false)
+    inspect_line(line, out_filename)
   end
 
 end
