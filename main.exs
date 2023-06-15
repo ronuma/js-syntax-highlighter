@@ -137,7 +137,7 @@ defmodule JSSH do
   end
 
   # helper func to inject html into the file
-  def inject(line, regex, class, out_filename) do
+  defp inject(line, regex, class, out_filename) do
     [head | _] = Regex.run(regex, line)
     html = "<span class=\"#{class}\">#{head}</span>"
     File.write(out_filename, html, [:append])
