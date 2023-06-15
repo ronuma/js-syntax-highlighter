@@ -96,7 +96,7 @@ defmodule JSSH do
         inject(line, space_regex, "space", out_filename)
       # check for an arrow function before checking equal sign
       Regex.match?(arrowfunc_regex, line) ->
-        inject(line, arrowfunc_regex, "arrowfunc", out_filename)
+        inject(line, arrowfunc_regex, "keyword", out_filename)
       # check for a boolean pattern
       Regex.match?(boolean_regex, line) ->
         inject(line, boolean_regex, "boolean", out_filename)
