@@ -43,13 +43,55 @@ NOTE: the html files have been set to be ignored by version control in the .giti
 
 <!-- Calcula la complejidad de tu algoritmo basada en el número de iteraciones y contrástala con el tiempo obtenido en el punto 4. -->
 
-For the proposed solution we defined 3 different functions, so in the following analysis we will "divide and conquer".
+As per the las time in the following analysis we will "divide and conquer".
 
-In the case of JSSH.run(in_filename) we can see that we are dealing with a complexity of O(n), where n depends of the file, like we explained in the previous point if the file were to be a very large file the execution time could be considerable. However unpacking this function further we can analyze two other functions that are necessary in order to initialize html output file and read the js file. For the first one, File.write(out_filename, doc_head), it is a simple as a complexity of O(1), since it is constant in it's execution.
+First we see the function for run: 
+```elixir
+def run(number_of_files) do
+    input_filenames(number_of_files)
+    |> Enum.map(&Task.async(fn -> write_file(&1) end))
+    |> IO.inspect()
+    |> Enum.map(&Task.await(&1))
+    |> IO.inspect()
+  end
+```
+We'll circle back to ```input_filenames```. But all the operations in the function itself have a complexity of O(n), as they are linear. The "n" depends of the number of files, like we explained the previous time, if the files were to be very large the execution time could be considerable.
 
-Following with the private function write_file(code, out_filename), mentioned in the previous paragraph, first splits the code by lines, removes the trailing spaces and \r and then calls inspect_line(line, out_filename). Let's break it down. String.split("\n") depends on the number of lines on the code, similar to the first function, which means a complexity of O(n). We follow with Enum.map(&String.trim_trailing/1), which deals with the removal of trailing spaces and \r, also has a linear time complexity, O(n).
+Now we can analyze ```input_filenames```:
+```elixir
+defp input_filenames(n), do: do_in_filenames(n, [])
 
-Lastly we have the inspect_line(line, out_filename). This is the core function so to speak, it analyses each line of the code and writes HTML code in order to showcase the file in a highlighted form. Taking this into account the complexity, yet again, depends on the input, however it is important that we point out that this functions utilizes recursion. In summary we can define the complexity as O(k*n), where k represents the number of pattern matching conditions and where k is the number of pattern matching conditions.
+  defp do_in_filenames(0, res), do: Enum.reverse(res)
+  defp do_in_filenames(n, res) do
+    name = IO.gets("Enter the name of the file to read: ") |> String.trim()
+    do_in_filenames(n - 1, [name | res])
+  end
+```
+It uses pattern matching and it is prompting the user for the name of the files. Since it is only being used for doing so it is a linear complexity of O(n).
+
+Now we can analyze ```write_file``, for this function we will have to unpack it a little bit.
+
+We will start with ```String.split("\n")```, which depends on the number of lines on the code, which means it has a complexity of O(n). 
+
+For the next function, ```Enum.map(&String.trim_trailing/1)```, we have a linear time complexity again since it iterates over each line, giving us a O(n) complexity.
+
+When we take a look at the ```inspect_line``` function we can see that the time it takes depends on each line and the number of regular expressions, so the complexity can be estimated by O(k*n), k being the number of regular expressions and n being the number of lines.
+
+So ```write_file``` has a constant complexity that can be approximated as O(n+(k*n)). The umber of lines is represented with n and the number of regular expressions as k.
+
+Lastly lets break down ```inject```, called by ```inspect line```:
+```elixir
+defp inject(line, regex, class, out_filename) do
+    [head | _] = Regex.run(regex, line)
+    html = "<span class=\"#{class}\">#{head}</span>"
+    File.write(out_filename, html, [:append])
+    line = Regex.replace(regex, line, "", global: false)
+    inspect_line(line, out_filename)
+  end
+```
+For ```Regex.run``` and ```Regex.replace``` we can see a complexity of O(n), in this case n represents the complexity of the regular expression pattern matching and the replacement respectively. Overall the complexity can be estimated as O(n+m+k), n and m represent the complexities of the regular expression matching and replacement and k the length of the line.
+
+In summary we can define the complexity as O(n * (m + (k * m))), where n represents the number of files to process, m is the  number of lines in each file and lastly k represents the number of regular expressions checked for each line.
 
 <br>
 
