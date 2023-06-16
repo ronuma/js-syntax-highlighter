@@ -28,6 +28,8 @@ Andrea Alexandra Barrón Córdova, A01783126
 
 5. After inputting the file name to inspect, the program runs the JS syntax highlighter with "index.html" as an output, so you can open it in your browser and see the results!
 
+NOTE: the index.html file has been set to be ignored by version control in the .gitignore file, so it will not be uploaded to the repository. If you want to see the file, you will have to run the program yourself.
+
 <br>
 
 ## Our thoughts about the proposed solution
