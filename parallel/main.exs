@@ -7,21 +7,28 @@ defmodule JSSH do
 
   @doc """
   This function runs the program.
-  It asks the user for the number of files and creates an array with the input filenames.
-  It then calls the write_file function for each file, creating a new process for each file.
+  It asks the user for the number of files to read and creates an array with the input filenames.
+  It then creates a new process for each file, and every process calls the write_file/1 function.
   It then waits for all the processes to finish and prints the result.
 
   write_file/1
+  Parameter: in_filename, the name of the input file.
   This function reads the input file and writes the output html file.
-  It splits the input file line by line and for each line calls the inspect_line function.
+  It splits the input file line by line and for each line calls the inspect_line/2 function.
 
   inspect_line/2
+  Parameters: line, the line of code to inspect.
+              out_filename, the name of the output file.
   This function inspects each line of the code and writes the html file.
   It uses regular expressions to match the different patterns and writes the html code.
   For every line, it calls itself recursively with helper func inject/4 until the line is empty.
   Every regular expression ensures that it is searched for at the beginning of the line.
 
   inject/4
+  Parameters: line, the line of code to inspect.
+              regex, the regular expression to match.
+              class, the class to assign to the html code.
+              out_filename, the name of the output file.
   This function injects the html code into the html file.
   It uses the regular expression to match the pattern and writes the html code.
   It also calls the inspect_line function recursively until the line is empty.
@@ -51,7 +58,7 @@ defmodule JSSH do
           <meta charset="UTF-8" />
           <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <link rel="stylesheet" href="styles.css" />
+          <link rel="stylesheet" href="../styles.css" />
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">

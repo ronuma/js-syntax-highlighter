@@ -1,6 +1,7 @@
 # JavaScript Syntax Highlighter
+## Parallel programming version
 
-2023-31-05
+2023-06-16
 
 Rodrigo Núñez Magallanes, A01028310
 
@@ -12,11 +13,11 @@ Andrea Alexandra Barrón Córdova, A01783126
 
 1. Clone the repository
 
-2. Navigate to the project directory in your terminal
+2. Navigate to the project directory in your terminal (remember to be in the parallel directory inside of the project)
 
 3. Do `$ iex main.exs` to compile the project and open the interactive elixir shell
 
-4. Do `iex> JSSH.run(in_filename)`; JSSH (short for JavaScript Syntax Highlighter) is the module name, and run is the function name, which takes the input file name as an argument (a string, so write it enclosed in double quotation marks e.g. "test.js"). We provided three sample test files:
+4. Do `iex> JSSH.run(number_of_files)`; JSSH (short for JavaScript Syntax Highlighter) is the module name, and run is the function name, which takes the number of JS files to read as an argument. You will be prompted to enter the file names that will be read, do this without quotation marks. We provided three sample test files:
 
    a. "test.js": this is the file we used to test the program, it has a lot of different cases, so it is a good file to test the program with.
 
@@ -24,21 +25,23 @@ Andrea Alexandra Barrón Córdova, A01783126
 
    c. "test.sw.js": this is an extract of a Redux state slice from a Next.js application which one of the team members worked on. It is a good example of a real-world JS file. SW in the file name stands for software, as in software development.
 
-   You can also use your own file, just make sure it is in the same directory as the project.
+   You can also use your own file, just make sure it is in the same directory as the project. Even though you could create a subdirectory and put the file there, the program will be able to read it and write an html file, only it will be created inside of the parallel directory, not inside of the subdirectory, so it is recommended to put the file in the same directory as the project. Especially because of the location of the css file that allow the html to be coloured.
 
-5. After inputting the file name to inspect, the program runs the JS syntax highlighter with "index.html" as an output, so you can open it in your browser and see the results!
+5. After inputting the file names to inspect, the program runs the JS syntax highlighter with as many threads as file names, with the name of the original file and the extension ".html" as outputs, so you can open them in your browser and see the results!
+
+NOTE: the html files have been set to be ignored by version control in the .gitignore file, so they will not be uploaded to the repository. If you want to see the html files, you will have to run the program yourself.
 
 <br>
 
-## Our thoughts about the proposed solution
+## Execution times and speedup
 
-The proposed solution has its advantages and disadvantages. To begin with, we had to sacrifice the recognition of multiline comments and strings. This was done to simplify the algorithm and be able to focus on the recognition of tokens. However, this is not a problem, since the program works correctly with single-line strings and comments. In addition, the program is not sensitive to whitespace, so it does not matter if there is whitespace between the tokens, the program will recognize them anyway.
-
-We used recursion and list handling, and well, the execution time of the program depends to a large extent on the size of the file to be read. Actually, the execution time is not that long, but if you wanted to read a very large file, the execution time could be considerable. With the test files we have, the execution time is approximately 0.5 seconds.
+<!-- Mide los tiempos de varias ejecuciones de las dos versiones de tu programa. Calcula el speedup obtenido. Reflexiona sobre las soluciones planteadas, los algoritmos implementados y sobre el tiempo de ejecución de estos. -->
 
 <br>
 
 ## Algorithm complexity
+
+<!-- Calcula la complejidad de tu algoritmo basada en el número de iteraciones y contrástala con el tiempo obtenido en el punto 4. -->
 
 For the proposed solution we defined 3 different functions, so in the following analysis we will "divide and conquer".
 
@@ -52,4 +55,4 @@ Lastly we have the inspect_line(line, out_filename). This is the core function s
 
 ## Ethical implications
 
-We consider that this type of technology does not necessarily have direct ethical implications, we do not see it quite so. This type of technology is basically designed for better development experience when working with a programming language, in this case, JavaScript, and also possibly for pointing out errors (by adding a DFA that executes every time a new character is added to the file, for example). However, we do not see any ethical implications in this type of technology, since it is not designed to be used in a malicious way, but rather to facilitate the work of developers.
+As in our previous work, we consider that this type of technology does not necessarily have direct ethical implications, we do not see it quite so. This type of technology is basically designed for better development experience when working with a programming language, in this case, JavaScript, and also possibly for pointing out errors (by adding a DFA that executes every time a new character is added to the file, for example). However, we do not see any ethical implications in this type of technology, since it is not designed to be used in a malicious way, but rather to facilitate the work of developers. The ability to use threads, however, is something we have just learned, and it is certainly a very powerful and helpful tool that will help us in the future.
