@@ -35,7 +35,10 @@ NOTE: the html files have been set to be ignored by version control in the .giti
 
 ## Execution times and speedup
 
-<!-- Mide los tiempos de varias ejecuciones de las dos versiones de tu programa. Calcula el speedup obtenido. Reflexiona sobre las soluciones planteadas, los algoritmos implementados y sobre el tiempo de ejecución de estos. -->
+Analyzing the parallel scenario we can observe a time difference, in which the parallel version depends heavily on the number of threads given. 
+For our specific case the sequential one happened to be faster, which may not be the expected scenario but means it is well developed and optimized, asn that, again, the parallel version relies on the number of threads given.
+
+We timed the different speeds the same time, three times for each and taking out an average, as last time to keep consistency which gave us a result of 1.12 vs 1.36 respectively.
 
 <br>
 
