@@ -6,10 +6,7 @@
 defmodule JSSH do
 
   @doc """
-  This function runs the program.
-  It asks the user for the number of files to read and creates an array with the input filenames.
-  It then creates a new process for each file, and every process calls the write_file/1 function.
-  It then waits for all the processes to finish and prints the result.
+  This is a description of the private functions of the module:
 
   write_file/1
   Parameter: in_filename, the name of the input file.
@@ -33,12 +30,31 @@ defmodule JSSH do
   It uses the regular expression to match the pattern and writes the html code.
   It also calls the inspect_line function recursively until the line is empty.
   """
-  def run(number_of_files) do
+
+  @doc """
+  run_sequential/1
+  Parameter: number_of_files, the number of files to read.
+  This function runs the program sequentially.
+  It calls the input_filenames/1 function to get the input filenames.
+  It then calls the write_file/1 function for each input filename.
+  """
+  def run_sequential(number_of_files) do
+    input_filenames(number_of_files)
+    |> Enum.map(&write_file(&1))
+  end
+
+  @doc """
+  run_parallel/1
+  Parameter: number_of_files, the number of files to read.
+  This function runs the program in parallel.
+  It calls the input_filenames/1 function to get the input filenames.
+  It creates a task for each input filename and calls the write_file/1 function.
+  It then awaits for all the tasks to finish.
+  """
+  def run_parallel(number_of_files) do
     input_filenames(number_of_files)
     |> Enum.map(&Task.async(fn -> write_file(&1) end))
-    |> IO.inspect()
     |> Enum.map(&Task.await(&1))
-    |> IO.inspect()
   end
 
   # helper function to get the input filenames

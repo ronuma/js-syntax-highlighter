@@ -17,7 +17,7 @@ Andrea Alexandra Barrón Córdova, A01783126
 
 3. Do `$ iex main.exs` to compile the project and open the interactive elixir shell
 
-4. Do `iex> JSSH.run(number_of_files)`; JSSH (short for JavaScript Syntax Highlighter) is the module name, and run is the function name, which takes the number of JS files to read as an argument. You will be prompted to enter the file names that will be read, do this without quotation marks. We provided three sample test files:
+4. Do `iex> JSSH.run_sequential(number_of_files)` or `iex> JSSH.run_parallel(number_of_files)`; JSSH (short for JavaScript Syntax Highlighter) is the module name, and either of the functions called performs the task of reading all the input files, only one does it sequentially and the other one does it using threads, and both take the number of JS files to read as an argument. You will be prompted to enter the file names that will be read, do this without quotation marks. We provided three sample test files:
 
    a. "test.js": this is the file we used to test the program, it has a lot of different cases, so it is a good file to test the program with.
 
@@ -40,8 +40,6 @@ NOTE: the html files have been set to be ignored by version control in the .giti
 <br>
 
 ## Algorithm complexity
-
-<!-- Calcula la complejidad de tu algoritmo basada en el número de iteraciones y contrástala con el tiempo obtenido en el punto 4. -->
 
 As per the las time in the following analysis we will "divide and conquer".
 
